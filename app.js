@@ -1,22 +1,27 @@
 const express = require('express')
-const produtoController = require('./controller/produto_controller')
 const app = express()
+const mongoose = require('mongoose')
 const port = 3000
 
-app.use(express.json());
+//Importar as rotas
+const rotaProduto = require('./rotas/produto_rotas');
 
-app.get('/produtos', produtoController.listar);
+app.use(express.json()) // for parsing application/json
+app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
 
-app.get('/produtos/:id', produtoController.buscarPorId)
+//Configuração do Mongoose
+mongoose.connect('mongodb://localhost:27017/app_produtos')
+  .then(() => { 
+    console.log('BD conectado')
+  }).catch((error) => {
+    console.log('Erro ao conectar ao BD')
+  });
+mongoose.Promise = global.Promise;
 
-app.post('/produtos', produtoController.novoProduto)
+//Uso das rotas
+app.use('/api/produtos', rotaProduto);
 
-app.put('/produtos/:id', produtoController.editarProduto)
-
-app.delete('/produtos/:id', produtoController.deletarProduto)
 
 app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`);
+  console.log(`Example app listening at http://localhost:${port}`)
 })
-
-
