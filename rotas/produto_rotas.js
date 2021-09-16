@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const produtoController = require('../controller/produto_controller')
 
-router.get('/', produtoController.listar)
+router.get('/',produtoController.listar)
 router.get('/search', produtoController.procurar)
 router.get('/:id', produtoController.buscarPorId)
 router.post('/', produtoController.inserir)
