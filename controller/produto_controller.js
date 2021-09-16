@@ -1,3 +1,5 @@
+const Produto = require("../model/produto");
+
 const produtos = [
   {id:1, nome:"produto1", preco: 10 },
   {id:2, nome:"produto2", preco: 20 },
@@ -7,7 +9,12 @@ const produtos = [
 let idGerado = 4;
 
 exports.listar = (req, res) => {
-  res.json(produtos)
+  Produto.find({}, (err, produtos) => {
+    if(err){
+      res.status(500).send(err);
+    }
+    res.json(produtos);
+  })
 }
 
 exports.buscarPorId = (req, res) => {
@@ -20,10 +27,13 @@ exports.buscarPorId = (req, res) => {
 }
 
 exports.inserir = (req, res) => {
-  const novoProduto = req.body;
-  novoProduto.id = idGerado++;
-  produtos.push(novoProduto);
-  return res.status(201).json(novoProduto);
+  let novoProduto = new Produto(req.body);
+  novoProduto.save((err, produto) =>{
+    if(err){
+      res.send(err);
+    }
+  })
+  res.status(201).json(novoProduto);
 }
 
 exports.atualizar = (req, res) => {
