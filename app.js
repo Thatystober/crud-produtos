@@ -16,7 +16,6 @@ mongoose.connect('mongodb://localhost:27017/app_produtos')
   }).catch((error) => {
     console.log('Erro ao conectar ao BD')
   });
-mongoose.Promise = global.Promise;
 
 //Uso das rotas
 app.use('/api/produtos', rotaProduto);

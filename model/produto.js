@@ -1,12 +1,13 @@
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema; // OU const { Schema } = mongoose;
+const Schema = mongoose.Schema;
+// OU const { Schema } = mongoose;
 
 const ProdutoSchema = new Schema({
-    nome: String, 
+    nome: String,
     preco: Number
-},
+}, 
 {
-    versionKey: false
+    versionKey: false    
 });
 
-module.exports = mongoose.model("Produto", ProdutoSchema)
+module.exports = mongoose.model("Produto", ProdutoSchema);

@@ -1,16 +1,8 @@
-const Produto = require("../model/produto");
-
-const produtos = [
-  {id:1, nome:"produto1", preco: 10 },
-  {id:2, nome:"produto2", preco: 20 },
-  {id:3, nome:"produto3", preco: 30 }
-];
-
-let idGerado = 4;
+const Produto = require("../model/produto")
 
 exports.listar = (req, res) => {
   Produto.find({}, (err, produtos) => {
-    if(err){
+    if(err) {
       res.status(500).send(err);
     }
     res.json(produtos);
@@ -18,41 +10,79 @@ exports.listar = (req, res) => {
 }
 
 exports.buscarPorId = (req, res) => {
-  for (const produto of produtos) {
-    if(req.params.id == produto.id) {
-      return res.json(produto);
-    }      
-  }
-  res.status(404).json({erro:"Produto nao encontrado"});
+  const id = req.params.id;
+    Produto.findById(id, (err, produto) => {
+      if(err) {
+        res.status(500).send(err);
+      }
+      if(produto) {        
+        res.json(produto);
+      }
+      else {
+        res.status(404).json({erro:"Produto nao encontrado"});
+      }
+    })
 }
 
 exports.inserir = (req, res) => {
-  let novoProduto = new Produto(req.body);
-  novoProduto.save((err, produto) =>{
-    if(err){
-      res.send(err);
+    let novoProduto = new Produto(req.body);
+    novoProduto.save((err, produto) => {
+      if(err) {
+        res.send(err);
+      }
+      res.status(201).json(novoProduto);
+    })
+  }
+
+  exports.atualizar = (req, res) => {
+    const id = req.params.id;
+    const produtoAtualizar = req.body;
+
+    Produto.findByIdAndUpdate(id, produtoAtualizar, {new:true},
+      (err, produtoAtualizado) => {
+        if(err) {
+          res.status(500).send(err);
+        }
+        if(produtoAtualizado) {        
+          res.json(produtoAtualizado);
+        }
+        else {
+          res.status(404).json({erro:"Produto nao encontrado"});
+        }
+      })    
+  }
+
+  exports.deletar  = (req, res) => {
+    const id = req.params.id;
+    Produto.findByIdAndDelete(id, (err, produtoDeletado) =>{
+      if(err) {
+        res.status(500).send(err);
+      }
+      if(produtoDeletado) {        
+        res.json(produtoDeletado);
+      }
+      else {
+        res.status(404).json({erro:"Produto nao encontrado"});
+      }
+    });
+  }
+
+  exports.procurar = (req, res) => {
+    if(req.query && req.query.nome){
+      const paramNome = req.query.nome;
+      Produto.find({nome: paramNome}, (err, produtos) => {
+        if(err) {
+          res.status(500).send(err);
+        }
+        if(produtos && produtos.length > 0) {        
+          res.json(produtos);
+        }
+        else {
+          res.status(404).json({erro:"Produto nao encontrado"});
+        }
+      })   
     }
-  })
-  res.status(201).json(novoProduto);
-}
-
-exports.atualizar = (req, res) => {
-  for (const produto of produtos) {
-    if(req.params.id == produto.id) {
-      produto.nome = req.body.nome;
-      produto.preco = req.body.preco;
-      return res.json(produto);
-    }      
+    else{
+      res.status(400).send({erro:"Faltou o parametro nome"});
+    }
   }
-  res.status(404).json({erro:"Produto nao encontrado"});
-}
-
-exports.deletar  = (req, res) => {
-  for (const indice in produtos) {
-    if(req.params.id == produtos[indice].id) {
-      const produtoDeletado = produtos.splice(indice,1);
-      return res.json(produtoDeletado[0]);
-    }      
-  }
-  res.status(404).json({erro:"Produto nao encontrado"});
-}
