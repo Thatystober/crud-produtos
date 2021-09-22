@@ -9,6 +9,16 @@ exports.listar = (req, res) => {
   })
 }
 
+/*Outra forma de realizar o listar - utilizando async await
+exports.listar = async (req, res) => {
+  try { 
+    const produtos = await Produto.find({});
+    res.json(produtos);
+  } catch (err) {
+    res.status(500).send(err);
+  }
+}*/
+
 exports.buscarPorId = (req, res) => {
   const id = req.params.id;
     Produto.findById(id, (err, produto) => {
